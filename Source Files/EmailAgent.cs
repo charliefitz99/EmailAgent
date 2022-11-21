@@ -60,7 +60,7 @@ namespace EmailAgent
 
         public string SendEmail(int id_number, string to_address, string subject, string body) 
         {
-            MailAddress to = new MailAddress("claritytestacc1@gmail.com");
+            MailAddress to = new MailAddress(to_address);
 
             MailAddress from = new MailAddress(credentialsIn[id_number].Username);
             string fromPassword = credentialsIn[id_number].Password;
@@ -76,9 +76,11 @@ namespace EmailAgent
 
             email.To.Add(to);
 
+            string host_domain = credentialsIn[id_number].Username.Split('@')[1];
+
             SmtpClient client = new SmtpClient()
             {
-                Host = "smtp.gmail.com",
+                Host = "smtp." + host_domain,
                 Port = 587,
                 EnableSsl = true,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
