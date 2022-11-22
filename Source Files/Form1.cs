@@ -33,27 +33,13 @@ namespace AgentGui
                 MessageBox.Show(ex.Message);
             }
         }
-        private void button1_Click(object sender, EventArgs e)
+        private async void button1_Click(object sender, EventArgs e)
         {
             try
             {
-                label3.Text = id_number.ToString() + "1";
 
-                string statusid = agent.SendEmail(id_number, textBox1.Text, textBox2.Text, textBox3.Text);
-                //if (statusid != "Message Sent") 
-                //{
-                //    try {
-                //        label3.Text = id_number.ToString() + " 2";
-                //        statusid = agent.SendEmail(id_number, textBox1.Text, textBox2.Text, textBox3.Text);
-                //        MessageBox.Show(statusid);
-                //    }
-                //    catch (Exception ex)
-                //    {
-                //        MessageBox.Show(ex.Message);
-                //    }
-                //}
-                MessageBox.Show(statusid);
-
+                await agent.SendEmail(id_number, textBox1.Text, textBox2.Text, textBox3.Text);
+                MessageBox.Show("Message Sent");
             }
             catch (Exception ex) {
                 MessageBox.Show(ex.Message);
@@ -64,6 +50,7 @@ namespace AgentGui
         {
             //string text = listBox1.GetItemText(listBox1.SelectedItem);
             id_number = listBox1.SelectedIndex;
+            label3.Text = "Sending from: " + listBox1.GetItemText(listBox1.SelectedItem);
 
         }
 
@@ -80,6 +67,7 @@ namespace AgentGui
         private void button2_Click(object sender, EventArgs e)
         {
             id_number = agent.AddAccount(textBox4.Text, textBox5.Text)-1;
+            label3.Text = "Sending from: " + textBox4.Text;
             //MessageBox.Show("");
             //listBox1.Items.Add("claritytestacc2@gmail.com");
         }

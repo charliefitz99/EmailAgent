@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Net.Mail;
 
 namespace EmailAgent
@@ -15,13 +16,11 @@ namespace EmailAgent
         public int Id { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
-
     }
 
     public class Emailer
     {
         public List<Credential> credentialsIn = new List<Credential>();
-
 
         // will become void function
         public string GetCredentials()
@@ -40,7 +39,6 @@ namespace EmailAgent
             return credentials_string;
         }
 
-
         public int AddAccount(string username, string password) 
         {
             Credential new_acc = new Credential();
@@ -58,8 +56,9 @@ namespace EmailAgent
             return new_acc.Id;
         }
 
-        public string SendEmail(int id_number, string to_address, string subject, string body) 
+        public async Task SendEmail(int id_number, string to_address, string subject, string body) 
         {
+            GetCredentials();
             MailAddress to = new MailAddress(to_address);
 
             MailAddress from = new MailAddress(credentialsIn[id_number].Username);
@@ -94,22 +93,44 @@ namespace EmailAgent
 
             int retries = 3;
             while (true)
-            {
+            { 
                 try
                 {
-                    client.Send(email);
+                    await client.SendMailAsync(email);
+                    using (StreamWriter output = File.AppendText("output.txt")) {
+                        output.WriteLine("STATUS: Message Sent");
+                        output.WriteLine("Sender: " + credentialsIn[id_number].Username);
+                        output.WriteLine("Recipient: " + to_address);
+                        output.WriteLine("Date: " + DateTime.Now.ToString("MM.dd.yyyy"));
+                        output.WriteLine("Subject: " + subject);
+                        output.WriteLine("Body:");
+                        output.WriteLine(body);
+                        output.WriteLine(" ");
+                    }
                     break;
                 }
                 catch (SmtpException ex)
                 {
-                    //if (--retries == 0) throw;
-                    if (--retries == 0) return ex.ToString() + retries.ToString();
+                    if (--retries == 0) {
+                        using (StreamWriter output = File.AppendText("output.txt"))
+                        {
+                            output.WriteLine("STATUS: Error Sending Message");
+                            output.WriteLine("Sender: " + credentialsIn[id_number].Username);
+                            output.WriteLine("Recipient: " + to_address);
+                            output.WriteLine("Date: " + DateTime.Now.ToString("MM.dd.yyyy"));
+                            output.WriteLine("Subject: " + subject);
+                            output.WriteLine("Body:");
+                            output.WriteLine(body);
+                            output.WriteLine(" ");
+                        }
+                        throw;
+                    } 
                     else Thread.Sleep(1000);
                     Console.WriteLine(ex.ToString());
                     //return ex.ToString();
                 }
             }
-            return "Message Sent";
+            return;
         }
     }
 

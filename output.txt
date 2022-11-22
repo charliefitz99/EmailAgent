@@ -1,0 +1,16 @@
+STATUS: Error Sending Message
+Sender: erroneousacc@gmail.com
+Recipient: charliefitz99@gmail.com
+Date: 11.22.2022
+Subject: Here ye here ye
+Body:
+test test
+ 
+STATUS: Message Sent
+Sender: claritytestacc1@gmail.com
+Recipient: charliefitz99@gmail.com
+Date: 11.22.2022
+Subject: Here ye here ye
+Body:
+test test
+ 
